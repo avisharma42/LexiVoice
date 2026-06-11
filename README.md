@@ -24,6 +24,26 @@ LexiVoice is a web-based reading assistant designed to help people with dyslexia
 - **⌨️ Keyboard Shortcuts**: Control playing, pausing, rulers, font size, and more entirely from your keyboard (like hitting `SPACE` to pause or `R` for the ruler).
 
 ---
+Screenshor:
+<img width="1896" height="847" alt="image" src="https://github.com/user-attachments/assets/9eb99b83-dfc7-4a92-8ef0-71305765bd27" />
+
+<img width="1901" height="852" alt="image" src="https://github.com/user-attachments/assets/4329498f-bc8c-475c-840f-6d76b5d744ac" />
+
+<img width="1896" height="852" alt="image" src="https://github.com/user-attachments/assets/d34d2be0-9b54-467a-9f20-38dbf287f55a" />
+
+<img width="1896" height="856" alt="image" src="https://github.com/user-attachments/assets/eca29bb1-5db5-4a12-b173-e6afd9721b68" />
+
+<img width="1888" height="857" alt="image" src="https://github.com/user-attachments/assets/bfee0b10-6600-43dd-929c-eeb3104486c9" />
+
+<img width="1893" height="855" alt="image" src="https://github.com/user-attachments/assets/bc69faa0-2f15-4697-8892-555396a7d8dd" />
+
+<img width="1887" height="852" alt="image" src="https://github.com/user-attachments/assets/0116a039-0a7c-4a60-8ad5-52a17aefaebe" />
+
+<img width="1876" height="846" alt="image" src="https://github.com/user-attachments/assets/e1490028-b15e-4256-84e2-0b8b93efbba2" />
+
+<img width="1891" height="862" alt="image" src="https://github.com/user-attachments/assets/21adcf67-64ca-49a7-9755-bf7aa15c8ad4" />
+
+<img width="1262" height="927" alt="image" src="https://github.com/user-attachments/assets/a815bd27-b4af-4693-8362-45581947d6df" />
 
 ## 🚀 How to Run It
 

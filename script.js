@@ -137,7 +137,9 @@ let learningStudioWord = '';
 let learningStudioSentenceIndex = 0;
 
 // Set PDF.js Worker Src
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+if (typeof pdfjsLib !== 'undefined') {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
 
 // APP INITIALIZATION
 window.addEventListener('DOMContentLoaded', () => {
@@ -1435,6 +1437,9 @@ async function handleUploadedFile(file) {
   try {
     let text = "";
     if (file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")) {
+      if (typeof pdfjsLib === 'undefined') {
+        throw new Error("PDF processing library is not loaded. Please check your internet connection.");
+      }
       text = await extractTextFromPDF(file);
     } else if (file.type === "text/plain" || file.name.toLowerCase().endsWith(".txt")) {
       text = await file.text();
@@ -3902,4 +3907,3 @@ window.handleGameDrop = handleGameDrop;
 window.handleGameSlotClick = handleGameSlotClick;
 window.handleGameChipClick = handleGameChipClick;
 window.speakPhoneme = speakPhoneme;
-});

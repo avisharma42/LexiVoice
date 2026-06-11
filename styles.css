@@ -877,7 +877,6 @@ main {
 }
 
 .child-mode .url-import-group,
-.child-mode .export-footer-card,
 .child-mode #chunk-controls {
   display: none !important;
 }

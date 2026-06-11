@@ -521,9 +521,6 @@ function applyAllSettings() {
   if (urlImportGroup) {
     urlImportGroup.classList.toggle('child-mode-hidden', settings.childModeEnabled);
   }
-  if (exportFooterCard) {
-    exportFooterCard.classList.toggle('child-mode-hidden', settings.childModeEnabled);
-  }
   if (chunkControls) {
     chunkControls.classList.toggle('child-mode-hidden', settings.childModeEnabled);
   }

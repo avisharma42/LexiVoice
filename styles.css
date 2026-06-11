@@ -2764,26 +2764,26 @@ input:checked+.toggle-slider:before {
 }
 
 @media print {
-  body {
+  body.printing-flashcards {
     background: white !important;
     color: black !important;
   }
   
-  /* Hide all app interfaces completely */
-  header,
-  main,
-  #bottom-toolbar,
-  #settings-panel,
-  .custom-modal-overlay,
-  #word-popup,
-  #toast-notification,
-  .skip-link,
-  .tour-tooltip {
+  /* Hide all app interfaces completely when printing flashcards */
+  body.printing-flashcards header,
+  body.printing-flashcards main,
+  body.printing-flashcards #bottom-toolbar,
+  body.printing-flashcards #settings-panel,
+  body.printing-flashcards .custom-modal-overlay,
+  body.printing-flashcards #word-popup,
+  body.printing-flashcards #toast-notification,
+  body.printing-flashcards .skip-link,
+  body.printing-flashcards .tour-tooltip {
     display: none !important;
   }
 
-  /* Display print deck container */
-  #printable-flashcards-deck {
+  /* Display print deck container when printing flashcards */
+  body.printing-flashcards #printable-flashcards-deck {
     display: block !important;
     width: 100% !important;
     margin: 0 !important;

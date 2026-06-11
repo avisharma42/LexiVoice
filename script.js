@@ -3877,6 +3877,7 @@ async function generatePrintableFlashcards() {
     deck.appendChild(backPage);
   }
 
+  document.body.classList.add('printing-flashcards');
   document.body.appendChild(deck);
 
   setTimeout(() => {
@@ -3884,6 +3885,7 @@ async function generatePrintableFlashcards() {
   }, 300);
 
   window.addEventListener('afterprint', () => {
+    document.body.classList.remove('printing-flashcards');
     if (deck && deck.parentNode) {
       deck.remove();
     }

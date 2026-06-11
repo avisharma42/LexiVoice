@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LexiVoice — Dyslexia Reading Companion</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="description"
+    content="LexiVoice is a scientifically-designed reading companion for people with dyslexia. Features include bionic reading, text-to-speech synchronization, custom backgrounds, line rulers, and text simplification.">
+  <meta name="keywords" content="dyslexia, reading companion, bionic reading, text to speech, education, accessibility">
+
+  <!-- External Fonts & Libraries -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/opendyslexic">
+
+  <!-- PDF.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <!-- Screen Reader Link -->
+  <a href="#reading-area" class="skip-link">Skip to main content</a>
+
+  <!-- TOPBAR -->
+  <header>
+    <div id="top-progress-container">
+      <div id="reading-progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <div class="header-layout">
+      <!-- Logo -->
+      <a href="#" class="logo-container" onclick="goBackToInput(); return false;"
+        aria-label="LexiVoice Reading Companion Home">
+        <svg class="logo-icon" viewBox="0 0 24 24">
+          <path
+            d="M12 3v18M3 5.5A2.5 2.5 0 0 1 5.5 3h6.5M3 18.5a2.5 2.5 0 0 1 2.5-2.5h6.5M21 5.5A2.5 2.5 0 0 0 18.5 3H12M21 18.5a2.5 2.5 0 0 0-18.5-2.5v2.5a2.5 2.5 0 0 0 2.5 2.5H12" />
+        </svg>
+        <span>LexiVoice</span>
+      </a>
+
+      <!-- Stats -->
+      <div class="stats-bar" aria-live="polite">
+        <div class="stats-item" id="stats-word-count">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+          </svg>
+          <span id="words-count-display">0 / 0 words</span>
+        </div>
+        <div class="stats-item" id="stats-time-remaining">
+          <button class="icon-btn" id="learning-studio-btn" aria-label="Open learning studio"
+            onclick="openLearningStudio()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H20v14.5A2.5 2.5 0 0 1 17.5 21H6.5A2.5 2.5 0 0 1 4 18.5z" />
+              <path d="M8 8h8M8 12h8M8 16h5" />
+            </svg>
+          </button>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>
+          <span id="time-remaining-display">0 min remaining</span>
+        </div>
+        <div class="stats-item" id="stats-timer">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg>
+          <span id="session-timer">Session: 0m 0s</span>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="header-actions">
+        <button class="icon-btn child-mode-quick-btn" id="child-mode-quick-btn" aria-label="Toggle child-friendly mode"
+          onclick="updateSetting('childModeEnabled', !settings.childModeEnabled)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 3c1.7 0 3 1.3 3 3s-1.3 3-3 3-3-1.3-3-3 1.3-3 3-3z" />
+            <path d="M6 21c0-3.3 2.7-6 6-6s6 2.7 6 6" />
+            <path d="M4 10l2 2 4-4" />
+          </svg>
+        </button>
+        <button class="icon-btn" id="tour-toggle-btn" aria-label="Restart onboarding tour" onclick="startTour()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="16" x2="12" y2="12" />
+            <line x1="12" y1="8" x2="12.01" y2="8" />
+          </svg>
+        </button>
+        <button class="icon-btn" id="shortcut-toggle-btn" aria-label="Open keyboard shortcuts cheat sheet"
+          onclick="toggleShortcutModal(true)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="4" width="20" height="16" rx="2" ry="2" />
+            <line x1="6" y1="8" x2="6.01" y2="8" />
+            <line x1="10" y1="8" x2="10.01" y2="8" />
+            <line x1="14" y1="8" x2="14.01" y2="8" />
+            <line x1="18" y1="8" x2="18.01" y2="8" />
+            <line x1="6" y1="12" x2="6.01" y2="12" />
+            <line x1="18" y1="12" x2="18.01" y2="12" />
+            <rect x="10" y1="12" width="4" height="1" rx="0.5" />
+            <line x1="6" y1="16" x2="6.01" y2="16" />
+            <line x1="10" y1="16" x2="10.01" y2="16" />
+            <line x1="14" y1="16" x2="14.01" y2="16" />
+            <line x1="18" y1="16" x2="18.01" y2="16" />
+          </svg>
+        </button>
+        <button class="icon-btn" id="settings-toggle-btn" aria-label="Open reading customization settings"
+          onclick="toggleSettingsPanel()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3" />
+            <path
+              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN AREA -->
+  <main>
+
+    <!-- FEATURE 1: INPUT PANEL -->
+    <div id="input-panel-container">
+      <div class="input-card" id="input-panel-card">
+
+        <!-- Drag & Drop Zone -->
+        <div class="drag-zone" id="drag-zone" tabindex="0"
+          aria-label="File upload dropzone. Press Enter to select a file.">
+          <svg class="no-print" viewBox="0 0 24 24">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2l6 6M12 18v-6M9 15l3-3 3 3" />
+          </svg>
+          <div class="drag-text-title">Drag & Drop a PDF or TXT File</div>
+          <div class="drag-text-sub">or click to browse your files</div>
+          <button class="btn-file-picker" type="button" onclick="document.getElementById('file-picker').click()">
+            Choose File
+          </button>
+          <input type="file" id="file-picker" accept=".pdf,.txt" style="display: none;">
+        </div>
+
+        <div class="divider-or">OR</div>
+
+        <!-- Textarea -->
+        <textarea class="text-input-area" id="text-input" placeholder="Type or paste any text here to begin reading..."
+          aria-label="Text to read"></textarea>
+
+        <!-- URL Import (Bonus) -->
+        <div class="url-import-group">
+          <input type="url" class="url-input" id="url-input"
+            placeholder="Paste a webpage URL to extract text (e.g. https://example.com)" aria-label="Webpage URL">
+          <button class="btn-import-url" type="button" onclick="handleURLImport()">Import Link</button>
+        </div>
+
+        <!-- Bottom row CTAs -->
+        <div class="action-row">
+          <button class="btn-sample" type="button" onclick="loadSampleText()">Try a Sample Text</button>
+          <button class="btn-start-reading" type="button" onclick="handleStartReading()">Start Reading</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- READING CONTAINER -->
+    <div id="reading-container">
+
+      <!-- Back Button -->
+      <div class="back-btn-container">
+        <button class="btn-back" onclick="goBackToInput()" aria-label="Go back to home file upload screen">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12" />
+            <polyline points="12 19 5 12 12 5" />
+          </svg>
+          Change Text / Upload New File
+        </button>
+      </div>
+
+      <!-- Reading Area Core -->
+      <div id="reading-area-container">
+        <!-- Interactive elements are rendered via JS inside #reading-area -->
+        <article id="reading-area" role="article" tabindex="0"
+          aria-label="Reading Pane. Double tap or click any word for syllables and pronunciation.">
+          <!-- Text dynamically loaded here -->
+          <div id="empty-state">
+            <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            <div class="empty-title">Drop a PDF here, or paste any text to begin reading.</div>
+          </div>
+        </article>
+
+        <!-- Finish Reading Action -->
+        <div class="finish-reading-container" id="finish-reading-btn-wrapper" style="display: none;">
+          <button class="btn-finish-reading" onclick="triggerReadingSessionEnd()"
+            aria-label="Finish reading session and view stats">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              style="margin-right: 6px; vertical-align: middle;">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            Finish Reading & View Stats
+          </button>
+        </div>
+      </div>
+
+      <!-- FEATURE 9: Paragraph Chunk navigation controls -->
+      <div class="back-btn-container">
+        <div id="chunk-controls">
+          <button class="chunk-btn" id="chunk-prev-btn" onclick="prevParagraph()" aria-label="Previous paragraph">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="19" y1="12" x2="5" y2="12" />
+              <polyline points="12 19 5 12 12 5" />
+            </svg> Back
+          </button>
+          <div id="chunk-progress">Paragraph 1 of 1</div>
+          <button class="chunk-btn" id="chunk-next-btn" onclick="nextParagraph()" aria-label="Next paragraph">
+            Next <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- FEATURE 11: EXPORT & SAVE PANEL -->
+      <div class="export-footer-card">
+        <div class="export-title">Export Reading Material</div>
+        <div class="export-btn-group">
+          <button class="btn-export" onclick="copyProcessedText()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+            </svg>
+            Copy Text
+          </button>
+          <button class="btn-export" onclick="downloadTxtFile()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+            </svg>
+            Save TXT
+          </button>
+          <button class="btn-export" onclick="window.print()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 6 2 18 2 18 9" />
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+              <rect x="6" y="14" width="12" height="8" />
+            </svg>
+            Save PDF / Print
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- BOTTOM TOOLBAR (Fixed) -->
+  <div id="bottom-toolbar">
+    <div class="toolbar-layout">
+
+      <!-- Skip & Playback control -->
+      <div class="toolbar-group">
+        <button class="btn-skip" onclick="skipBackward()" aria-label="Skip backward 5 words">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 19 2 12 11 5 11 19" />
+            <polygon points="22 19 13 12 22 5 22 19" />
+          </svg>
+        </button>
+
+        <button class="btn-skip btn-restart" onclick="restartPlayback()" aria-label="Start reading from the beginning">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12a9 9 0 1 0 3-6.7" />
+            <polyline points="3 3 6 3 6 6" />
+          </svg>
+        </button>
+
+        <button class="playback-btn" id="play-btn" onclick="togglePlayback()" aria-label="Play spoken text">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="5 3 19 12 5 21 5 3" />
+          </svg>
+        </button>
+
+        <button class="btn-skip" onclick="skipForward()" aria-label="Skip forward 5 words">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="13 19 22 12 13 5 13 19" />
+            <polygon points="2 19 11 12 2 5 2 19" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- TTS Speech rate controls -->
+      <div class="toolbar-group">
+        <div class="slider-control-item">
+          <span>Speed</span>
+          <input type="range" class="slider-input" id="rate-slider" min="0.5" max="2.0" step="0.1" value="0.9"
+            oninput="handleTTSConfigChange()" aria-label="Speech Speed Rate">
+          <span id="rate-val">0.9x</span>
+        </div>
+
+        <div class="slider-control-item">
+          <span>Pitch</span>
+          <input type="range" class="slider-input" id="pitch-slider" min="0.8" max="1.2" step="0.05" value="1.0"
+            oninput="handleTTSConfigChange()" aria-label="Speech Voice Pitch">
+          <span id="pitch-val">1.0x</span>
+        </div>
+      </div>
+
+      <!-- Voice selector dropdown -->
+      <div class="toolbar-group">
+        <select class="voice-select-box" id="voice-select" onchange="handleTTSConfigChange()"
+          aria-label="Choose Text-to-Speech Voice">
+          <option>Loading system voices...</option>
+        </select>
+      </div>
+
+      <!-- Volume Bar -->
+      <div class="toolbar-group">
+        <div class="slider-control-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+          </svg>
+          <input type="range" class="slider-input" id="volume-slider" min="0" max="1" step="0.1" value="0.8"
+            oninput="handleTTSConfigChange()" aria-label="Speech Volume">
+        </div>
+        <button class="btn-simplify" id="simplify-toggle-btn" onclick="toggleSimplifier()"
+          aria-label="Simplify text to plain words">Simplify Text</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- VISUAL CUSTOMIZATION PANEL (Settings Sidebar) -->
+  <div id="sidebar-overlay" onclick="toggleSettingsPanel(false)"></div>
+  <div id="settings-panel" role="dialog" aria-modal="true" aria-label="Reading configuration settings sidebar">
+
+    <div class="settings-header">
+      <h2>Reading Settings</h2>
+      <button class="icon-btn" aria-label="Close settings sidebar" onclick="toggleSettingsPanel(false)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="settings-scroll-area">
+
+      <div id="child-mode-banner" class="child-mode-banner" style="display: none;">
+        Child-friendly mode is active. Reading help is simplified, but every feature is still available from the
+        settings panel.
+      </div>
+
+      <div id="mode-summary-card" class="mode-summary-card" style="display: none;">
+        <!-- Injected in JS -->
+      </div>
+
+      <!-- Typography settings -->
+      <div>
+        <div class="settings-section-title">Typography Customization</div>
+        <div class="settings-group">
+
+          <div class="control-row">
+            <div class="control-label-row">
+              <span>Font Size</span>
+              <span id="font-size-val">20px</span>
+            </div>
+            <input type="range" class="settings-slider" id="font-size-slider" min="16" max="32" step="1" value="20"
+              oninput="updateSetting('fontSize', this.value)">
+          </div>
+
+          <div class="control-row">
+            <div class="control-label-row">
+              <span>Line Height</span>
+              <span id="line-height-val">1.8</span>
+            </div>
+            <input type="range" class="settings-slider" id="line-height-slider" min="1.5" max="2.5" step="0.1"
+              value="1.8" oninput="updateSetting('lineHeight', this.value)">
+          </div>
+
+          <div class="control-row">
+            <div class="control-label-row">
+              <span>Letter Spacing</span>
+              <span id="letter-spacing-val">0.12em</span>
+            </div>
+            <input type="range" class="settings-slider" id="letter-spacing-slider" min="0" max="0.3" step="0.02"
+              value="0.12" oninput="updateSetting('letterSpacing', this.value)">
+          </div>
+
+          <div class="control-row">
+            <div class="control-label-row">
+              <span>Word Spacing</span>
+              <span id="word-spacing-val">0.25em</span>
+            </div>
+            <input type="range" class="settings-slider" id="word-spacing-slider" min="0" max="0.5" step="0.05"
+              value="0.25" oninput="updateSetting('wordSpacing', this.value)">
+          </div>
+
+          <div class="control-row">
+            <label class="control-label-row" for="font-select">Font Style</label>
+            <select class="settings-select" id="font-select" onchange="updateSetting('fontFamily', this.value)">
+              <option value="OpenDyslexic">OpenDyslexic (Dyslexia Optimized)</option>
+              <option value="Lexie Readable">Lexie Readable (Alternative)</option>
+              <option value="Arial">Arial (Clean Sans-Serif)</option>
+              <option value="Comic Sans">Comic Sans MS (High Readability)</option>
+              <option value="Georgia">Georgia (Serif)</option>
+            </select>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Color overlays & Dark mode -->
+      <div>
+        <div class="settings-section-title">Color Overlay & Presets</div>
+        <div class="settings-group">
+
+          <div class="control-row">
+            <span class="control-label-row">Irlen Colored Presets</span>
+            <div class="color-presets-grid">
+              <button class="preset-btn active" data-preset="cream" style="background-color: #F7F3E9;"
+                title="Warm Cream Background" onclick="setPresetOverlay('cream')"></button>
+              <button class="preset-btn" data-preset="mint" style="background-color: #EAF4EE;"
+                title="Mint Green Background" onclick="setPresetOverlay('mint')"></button>
+              <button class="preset-btn" data-preset="yellow" style="background-color: #FEFAE0;"
+                title="Soft Yellow Background" onclick="setPresetOverlay('yellow')"></button>
+              <button class="preset-btn" data-preset="lavender" style="background-color: #F0ECF8;"
+                title="Lavender Background" onclick="setPresetOverlay('lavender')"></button>
+              <button class="preset-btn" data-preset="peach" style="background-color: #FDF0E8;" title="Peach Background"
+                onclick="setPresetOverlay('peach')"></button>
+              <button class="preset-btn" data-preset="skyblue" style="background-color: #EAF3FB;"
+                title="Sky Blue Background" onclick="setPresetOverlay('skyblue')"></button>
+            </div>
+          </div>
+
+          <div class="custom-pickers-row">
+            <div class="color-picker-item">
+              <span>Custom BG</span>
+              <input type="color" class="color-input-picker" id="custom-bg-picker"
+                onchange="setCustomBgColor(this.value)" aria-label="Custom background color picker">
+            </div>
+            <div class="color-picker-item">
+              <span>Text Color</span>
+              <input type="color" class="color-input-picker" id="custom-text-picker"
+                onchange="setCustomTextColor(this.value)" aria-label="Custom text color picker">
+            </div>
+          </div>
+
+          <div class="control-row">
+            <label class="control-label-row" for="theme-mode-select">Display Theme</label>
+            <select class="settings-select" id="theme-mode-select" onchange="updateSetting('themeMode', this.value)">
+              <option value="light">Light Presets / Colors</option>
+              <option value="dark">Dark Mode (Night Strain)</option>
+              <option value="auto">System Default (Automatic)</option>
+            </select>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Reading Aids / Toggles -->
+      <div>
+        <div class="settings-section-title">Reading Aids & Focus</div>
+        <div class="settings-group">
+
+          <div class="toggle-row">
+            <span class="toggle-label">Bionic Bold Anchors</span>
+            <label class="switch">
+              <input type="checkbox" id="bionic-toggle" onchange="updateSetting('bionicEnabled', this.checked)">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="toggle-row">
+            <span class="toggle-label">Alternating Syllables Color</span>
+            <label class="switch">
+              <input type="checkbox" id="syllables-color-toggle" onchange="updateSetting('syllableHighlightEnabled', this.checked)">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="toggle-row">
+            <span class="toggle-label">Letter Reversal Helper (b/d/p/q)</span>
+            <label class="switch">
+              <input type="checkbox" id="reversal-helper-toggle" onchange="updateSetting('reversalHelperEnabled', this.checked)">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="toggle-row">
+            <span class="toggle-label">Reading Ruler (R)</span>
+            <label class="switch">
+              <input type="checkbox" id="ruler-toggle" onchange="updateSetting('rulerEnabled', this.checked)">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="toggle-row">
+            <span class="toggle-label">Ruler Focus Dimming (F)</span>
+            <label class="switch">
+              <input type="checkbox" id="focus-dim-toggle" onchange="updateSetting('focusDimEnabled', this.checked)">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="toggle-row">
+            <span class="toggle-label">Extra Paragraph Spacing</span>
+            <label class="switch">
+              <input type="checkbox" id="para-spacing-toggle"
+                onchange="updateSetting('paraSpacingEnabled', this.checked)">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="toggle-row">
+            <span class="toggle-label">Display Punctuation</span>
+            <label class="switch">
+              <input type="checkbox" id="punctuation-toggle" onchange="updateSetting('showPunctuation', this.checked)">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="toggle-row">
+            <span class="toggle-label">Show Paragraph Chunks (C)</span>
+            <label class="switch">
+              <input type="checkbox" id="chunk-mode-toggle" onchange="updateSetting('chunkModeEnabled', this.checked)">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="toggle-row">
+            <span class="toggle-label">Color-Coded Grammar</span>
+            <label class="switch">
+              <input type="checkbox" id="grammar-toggle" onchange="updateSetting('grammarEnabled', this.checked)">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="toggle-row">
+            <span class="toggle-label">Eye Rest Breaks</span>
+            <label class="switch">
+              <input type="checkbox" id="break-reminder-toggle"
+                onchange="updateSetting('breakReminderEnabled', this.checked)">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="toggle-row">
+            <span class="toggle-label">Child-Friendly Mode</span>
+            <label class="switch">
+              <input type="checkbox" id="child-mode-toggle" onchange="updateSetting('childModeEnabled', this.checked)">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="toggle-row">
+            <span class="toggle-label">Parent / Teacher Mode</span>
+            <label class="switch">
+              <input type="checkbox" id="teacher-mode-toggle"
+                onchange="updateSetting('teacherModeEnabled', this.checked)">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="toggle-row">
+            <span class="toggle-label">Short Session Mode</span>
+            <label class="switch">
+              <input type="checkbox" id="short-session-toggle"
+                onchange="updateSetting('shortSessionEnabled', this.checked)">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="control-row">
+            <span class="control-label-row">Short Session Mode</span>
+            <div class="column-width-row">
+              <button class="col-btn" data-short="3" onclick="setShortSessionMinutes(3)">3 min</button>
+              <button class="col-btn active" data-short="5" onclick="setShortSessionMinutes(5)">5 min</button>
+              <button class="col-btn" data-short="10" onclick="setShortSessionMinutes(10)">10 min</button>
+            </div>
+          </div>
+
+          <div class="control-row">
+            <span class="control-label-row">Reading Grid Column Width</span>
+            <div class="column-width-row">
+              <button class="col-btn" data-col="narrow" onclick="setColumnWidth('narrow')">50ch (Narrow)</button>
+              <button class="col-btn active" data-col="medium" onclick="setColumnWidth('medium')">65ch (Mid)</button>
+              <button class="col-btn" data-col="wide" onclick="setColumnWidth('wide')">80ch (Wide)</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Panel Footer -->
+    <div class="settings-footer">
+      <button class="btn-reset" onclick="resetSettings()">Reset to Defaults</button>
+      <button class="btn-child-preset" onclick="applyChildFriendlyPreset()">Apply Child-Friendly Preset</button>
+      <button class="btn-child-preset btn-teacher-preset" onclick="applyTeacherModePreset()">Apply Parent / Teacher
+        Setup</button>
+      <button class="btn-child-preset btn-lock-toggle" id="teacher-lock-toggle-btn"
+        onclick="updateSetting('teacherLockEnabled', !settings.teacherLockEnabled)">Lock Settings</button>
+      <div class="export-import-row">
+        <button class="settings-action-btn" onclick="exportSettingsFile()">Export Settings</button>
+        <button class="settings-action-btn" onclick="document.getElementById('import-settings-file').click()">Import
+          Settings</button>
+        <input type="file" id="import-settings-file" accept=".json" style="display: none;"
+          onchange="importSettingsFile(event)">
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOAT ELEMENT: WORD POPUP -->
+  <div id="word-popup" role="tooltip" aria-hidden="true"></div>
+
+  <!-- TOAST NOTIFICATION POPUP -->
+  <div id="toast-notification">Notification text</div>
+
+  <!-- KEYBOARD SHORTCUTS MODAL -->
+  <div id="shortcut-modal" class="custom-modal-overlay" onclick="if (event.target === this) toggleShortcutModal(false)"
+    role="dialog" aria-modal="true" aria-label="Keyboard shortcuts reference guide">
+    <div class="custom-modal-content glassmorphism">
+      <h2>Keyboard Shortcuts</h2>
+      <p>Control LexiVoice quickly without touching your mouse using these shortcuts:</p>
+
+      <div class="shortcut-list">
+        <div class="shortcut-item"><kbd>SPACE</kbd> <span>Play / Pause reading</span></div>
+        <div class="shortcut-item"><kbd>R</kbd> <span>Toggle Reading Ruler guide</span></div>
+        <div class="shortcut-item"><kbd>F</kbd> <span>Toggle Line focus dimming helper</span></div>
+        <div class="shortcut-item"><kbd>B</kbd> <span>Toggle Bionic reading bold anchors</span></div>
+        <div class="shortcut-item"><kbd>Y</kbd> <span>Toggle Alternating Syllables color</span></div>
+        <div class="shortcut-item"><kbd>V</kbd> <span>Toggle Letter Reversal Helper (b/d/p/q)</span></div>
+        <div class="shortcut-item"><kbd>C</kbd> <span>Toggle Chunk (one-paragraph) mode</span></div>
+        <div class="shortcut-item"><kbd>S</kbd> <span>Open settings customization panel</span></div>
+        <div class="shortcut-item"><kbd>←</kbd> <kbd>→</kbd> <span>Prev / Next paragraph (in Chunk mode)</span></div>
+        <div class="shortcut-item"><kbd>↑</kbd> <kbd>↓</kbd> <span>Move ruler up / down (when manual and locked)</span>
+        </div>
+        <div class="shortcut-item"><kbd>+</kbd> <kbd>-</kbd> <span>Increase / Decrease reading font size</span></div>
+        <div class="shortcut-item"><kbd>?</kbd> <span>Open this shortcuts help guide</span></div>
+        <div class="shortcut-item"><kbd>ESC</kbd> <span>Close any open panel or popup dialog</span></div>
+      </div>
+
+      <button class="modal-close-btn" onclick="toggleShortcutModal(false)">Got It</button>
+    </div>
+  </div>
+
+  <!-- LARGE FILE WARNING MODAL -->
+  <div id="large-file-modal" class="custom-modal-overlay" role="dialog" aria-modal="true"
+    aria-label="Large document loading speed warning">
+    <div class="custom-modal-content glassmorphism" id="large-file-modal-content">
+      <!-- Injected in JS -->
+    </div>
+  </div>
+
+  <!-- SESSION STATS ENCOURAGEMENT MODAL -->
+  <div id="encouragement-modal" class="custom-modal-overlay"
+    onclick="if (event.target === this) this.classList.remove('visible')" role="dialog" aria-modal="true"
+    aria-label="Session reading stats and goals encouragement">
+    <div class="custom-modal-content glassmorphism" id="encouragement-modal-content">
+      <!-- Injected in JS -->
+    </div>
+  </div>
+
+  <!-- BREAK REMINDER MODAL -->
+  <div id="break-modal" class="custom-modal-overlay" role="dialog" aria-modal="true"
+    aria-label="Rest your eyes break reminder">
+    <div class="custom-modal-content glassmorphism">
+      <div class="modal-emoji">🧘</div>
+      <h2>Time to Rest Your Eyes!</h2>
+      <p>Reading takes a lot of cognitive energy. Let's take a 30-second break to rest your eyes and prevent mental
+        fatigue.</p>
+
+      <div class="breathing-sandbox">
+        <div class="breathing-circle"></div>
+        <div class="breathing-instruction">Breathe in...</div>
+      </div>
+
+      <div id="break-timer-count"
+        style="font-weight: bold; margin-bottom: 1.2rem; font-size: 1.15rem; color: var(--accent-warm);">Remaining: 30s
+      </div>
+
+      <button class="modal-close-btn" style="background: var(--accent-primary);" onclick="closeBreakModal()">Finished
+        Rest</button>
+    </div>
+  </div>
+
+  <!-- LEARNING STUDIO MODAL -->
+  <div id="learning-studio-modal" class="custom-modal-overlay" role="dialog" aria-modal="true"
+    aria-label="Learning studio for phonics and practice">
+    <div class="custom-modal-content glassmorphism learning-studio-content">
+      <!-- Top Close Button -->
+      <button class="modal-top-close-btn" aria-label="Close learning studio" onclick="toggleLearningStudio(false)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <h2>Learning Studio</h2>
+      <p>Use these focused tools for word practice, short sessions, and guided support.</p>
+
+      <!-- TABS CONTROLS -->
+      <div class="learning-studio-tabs">
+        <button class="studio-tab active" id="tab-phonics-btn" onclick="switchStudioTab('phonics')">
+          Phonics & Drill 💡
+        </button>
+        <button class="studio-tab" id="tab-flashcards-btn" onclick="switchStudioTab('flashcards')">
+          Sight Word Flashcards 🗂
+        </button>
+        <button class="studio-tab" id="tab-games-btn" onclick="switchStudioTab('games')">
+          Practice Games 🎮
+        </button>
+      </div>
+
+      <!-- TAB CONTENT: PHONICS & DRILL -->
+      <div id="studio-phonics-tab-content" class="studio-tab-content active-content">
+        <div id="learning-studio-word-area" class="learning-word-area">
+          <!-- Injected in JS -->
+        </div>
+
+        <div class="learning-studio-grid">
+          <section class="learning-card">
+            <div class="learning-card-title">Phonics Practice</div>
+            <div class="learning-card-text">Break the word into sounds, syllables, and letters.</div>
+            <div class="learning-card-actions">
+              <button class="modal-close-btn" onclick="hearLearningWord()">Hear Word</button>
+              <button class="modal-close-btn" onclick="soundOutLearningWord()">Sound It Out</button>
+            </div>
+          </section>
+
+          <section class="learning-card">
+            <div class="learning-card-title">Short Session</div>
+            <div class="learning-card-text">Choose a short, confidence-friendly reading goal.</div>
+            <div class="learning-card-actions short-session-actions">
+              <button class="session-chip" onclick="setShortSessionMinutes(3)">3 min</button>
+              <button class="session-chip" onclick="setShortSessionMinutes(5)">5 min</button>
+              <button class="session-chip" onclick="setShortSessionMinutes(10)">10 min</button>
+            </div>
+          </section>
+
+          <section class="learning-card">
+            <div class="learning-card-title">Parent / Teacher Setup</div>
+            <div class="learning-card-text">Apply a guided setup with calm reading defaults.</div>
+            <div class="learning-card-actions">
+              <button class="modal-close-btn" style="background: var(--accent-success);"
+                onclick="applyTeacherModePreset()">Apply Setup</button>
+              <button class="modal-close-btn" onclick="restoreTeacherModeSnapshot()">Restore Previous</button>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- TAB CONTENT: SIGHT WORD FLASHCARDS -->
+      <div id="studio-flashcards-tab-content" class="studio-tab-content">
+        <div id="flashcard-game-container">
+          <!-- Injected in JS (Dynamic Flashcards game) -->
+        </div>
+      </div>
+
+      <!-- TAB CONTENT: PRACTICE GAMES -->
+      <div id="studio-games-tab-content" class="studio-tab-content">
+        <div id="games-sandbox-container">
+          <!-- Injected in JS (Dynamic Phonics Games) -->
+        </div>
+      </div>
+
+      <button class="modal-close-btn" onclick="toggleLearningStudio(false)">Close</button>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT PROGRAMMING LOGIC -->
+  <script src="script.js" defer></script>
+</body>
+
+</html>
